@@ -53,6 +53,8 @@ $(document).ready(function () {
             unDrawCharacters('enemiesDiv');
             createSectionMessage('defenderDiv','The Defender','12');
             currentDefender.createHtml('defenderDiv','12','12','12');
+            characters = removeFromArray(currentDefender.id, characters);
+            console.log(characters);
             removeClickHandler(currentDefender.id);
             createFightArea();
         }
@@ -65,9 +67,41 @@ $(document).ready(function () {
         attackButton.text('Attack!');
         attackColumn.append(attackButton);
         fightDiv.append(attackColumn);
-        
+        attackButton.on('click', ()=> attack());
     }
 
+    function attack(){
+        console.log('defender hp', currentDefender.hp);
+        console.log('host current atack', hostCharacter.currentAttack);
+        console.log('host hp', hostCharacter.hp);
+        currentDefender.hp -= hostCharacter.currentAttack;
+        hostCharacter.currentAttack += hostCharacter.baseAttack;
+        hostCharacter.hp -= currentDefender.counterAttack;
+        console.log('*********************************');
+        console.log('defender hp', currentDefender.hp);
+        console.log('host current atack', hostCharacter.currentAttack);
+        console.log('host hp', hostCharacter.hp);
+        console.log('-------------------------------');
+
+        //Refresh new hp on screen.
+        
+
+        if(currentDefender.hp <= 0){
+            /*Logic you win
+            //Message of win
+            //Check if there are more enemies available
+            //Clean fight area and defenderDiv
+            //Show available enemies if its the case
+            //If not, restart the game from the beginning
+            */
+        } else if (hostCharacter.hp <= 0) {
+            /*Logic you loose
+            //Message of loose
+            //Restart the game from the beginning
+            */
+        }
+    }
+    
     function removeClickHandler(characterId){
         $('#'+ characterId + " img").unbind("click");
     }
@@ -98,7 +132,7 @@ $(document).ready(function () {
             baseAttack: attack,
             currentAttack: attack,
             counterAttack,
-            createHtml: function (divName, sm='4', m='3', xs='6') {
+            createHtml: function (divName, sm='4', m='4', xs='6') {
                 var chooseCharacterDiv = $('#' + divName);
                 var characterColumn = $(`<div class="col-sm-${sm} col-md-${m} col-${xs}">`);
                 var characterCard = $('<div class="charater_card">');
