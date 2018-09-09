@@ -8,6 +8,7 @@ $(document).ready(function () {
     function initGame() {
         restartGameState();
         createCharactersArray();
+        console.log(characters);
         createSectionTitle('chooseCharacterDiv', 'Pick your fight character', '12');
         drawCharacters('chooseCharacterDiv', characters);
     }
@@ -46,11 +47,13 @@ $(document).ready(function () {
     function handleCharacterClick(characterId) {
         var character = getSelectedCharacter(characterId);
         if (!characterChoosen) {
+            hostCharacter = character;
             chosenCharacterActions(character);
             characterChoosen = true;
             createSectionTitle('enemiesDiv', 'Enemies available to attack', '12');
             drawCharacters('enemiesDiv', characters);
         } else {
+            currentDefender = character;
             chosenCharacterActions(character);
             createFightArea();
         }
@@ -127,22 +130,29 @@ $(document).ready(function () {
         };
     }
 
-    function attack() {
-        console.log('defender hp', currentDefender.hp);
-        console.log('host current atack', hostCharacter.currentAttack);
-        console.log('host hp', hostCharacter.hp);
+    function updateScreenAfterAttack(){
+        updateHp(hostCharacter);
+        updateHp(currentDefender);
+    }
+
+    function displayAttackStatus(){
+        
+    }
+
+    function updateHp(character){
+        $('#'+character.id + ' .character_card-text').text(character.hp);
+    }
+
+    function attackOperations(){
         currentDefender.hp -= hostCharacter.currentAttack;
         hostCharacter.currentAttack += hostCharacter.baseAttack;
         hostCharacter.hp -= currentDefender.counterAttack;
-        console.log('*********************************');
-        console.log('defender hp', currentDefender.hp);
-        console.log('host current atack', hostCharacter.currentAttack);
-        console.log('host hp', hostCharacter.hp);
-        console.log('-------------------------------');
+    }
 
-        //Refresh new hp on screen.
-
-
+    function attack() {
+        attackOperations();
+        updateScreenAfterAttack();
+        
         if (currentDefender.hp <= 0) {
             /*Logic you win
             //Message of win
