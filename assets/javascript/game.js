@@ -42,17 +42,17 @@ $(document).ready(function () {
             characterChoosen = true;
             characters = removeFromArray(hostCharacter.id, characters);
             unDrawCharacters('chooseCharacterDiv');
-            createSectionMessage('chosenCharacterDiv','Your character','6');
-            hostCharacter.createHtml('chosenCharacterDiv');
+            createSectionMessage('chosenCharacterDiv','Your character','12');
+            hostCharacter.createHtml('chosenCharacterDiv','12','12','12');
             removeClickHandler(hostCharacter.id);
-            createSectionMessage('enemiesDiv','Enemies available to attack','9');
+            createSectionMessage('enemiesDiv','Enemies available to attack','12');
             drawCharacters('enemiesDiv', characters);
         } else {
             currentDefender = getSelectedCharacter(characterId);
             characters = removeFromArray(currentDefender.id, characters);
             unDrawCharacters('enemiesDiv');
-            createSectionMessage('defenderDiv','The Defender','6');
-            currentDefender.createHtml('defenderDiv');
+            createSectionMessage('defenderDiv','The Defender','12');
+            currentDefender.createHtml('defenderDiv','12','12','12');
             removeClickHandler(currentDefender.id);
             createFightArea();
         }
@@ -60,7 +60,7 @@ $(document).ready(function () {
 
     function createFightArea () { 
         var fightDiv = $('#fightDiv');
-        var attackColumn = $('<div class="col-md-6 col-sm-6 col-6 text-center">')
+        var attackColumn = $('<div class="col-md-12 col-sm-12 col-12">')
         var attackButton = $('<button type="button" class="btn btn-danger">');
         attackButton.text('Attack!');
         attackColumn.append(attackButton);
@@ -98,9 +98,9 @@ $(document).ready(function () {
             baseAttack: attack,
             currentAttack: attack,
             counterAttack,
-            createHtml: function (divName) {
+            createHtml: function (divName, sm='4', m='3', xs='6') {
                 var chooseCharacterDiv = $('#' + divName);
-                var characterColumn = $('<div class="col-sm-6 col-md-3 col-6">');
+                var characterColumn = $(`<div class="col-sm-${sm} col-md-${m} col-${xs}">`);
                 var characterCard = $('<div class="charater_card">');
                 characterCard.attr('id', this.id);
                 var characterImage = $('<img>');
