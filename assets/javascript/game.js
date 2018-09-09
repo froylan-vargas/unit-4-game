@@ -15,6 +15,7 @@ $(document).ready(function () {
         characters.push(createCharacter('luke', 'Luke Skywalker', 220, 9, 18));
         characters.push(createCharacter('leia', 'Leia', 160, 6, 12));
         characters.push(createCharacter('obi', 'Obi-Wan Kenobi', 190, 5, 10));
+        createSectionMessage('chooseCharacterDiv', 'Pick your fight character','12');
         drawCharacters('chooseCharacterDiv', characters);
     }
 
@@ -24,26 +25,46 @@ $(document).ready(function () {
         });
     }
 
+    function createSectionMessage(divName, message, size){
+        var currentDiv = $('#' + divName);
+        var messageDiv = $('<div class="row text-center">');
+        var messageColumn = $(`<div class="col-md-${size} col-sm-${size} col-${size}">`);
+        var messageElement = $('<h3>');
+        messageElement.text(message);
+        messageColumn.append(messageElement);
+        messageDiv.append(messageColumn);
+        messageDiv.insertBefore(currentDiv);
+    }
+
     function handleCharacterClick(characterId) {
         if (!characterChoosen) {
             hostCharacter = getSelectedCharacter(characterId);
             characterChoosen = true;
             characters = removeFromArray(hostCharacter.id, characters);
             unDrawCharacters('chooseCharacterDiv');
+            createSectionMessage('chosenCharacterDiv','Your character','6');
             hostCharacter.createHtml('chosenCharacterDiv');
             removeClickHandler(hostCharacter.id);
+            createSectionMessage('enemiesDiv','Enemies available to attack','9');
             drawCharacters('enemiesDiv', characters);
         } else {
             currentDefender = getSelectedCharacter(characterId);
             characters = removeFromArray(currentDefender.id, characters);
             unDrawCharacters('enemiesDiv');
-            drawCharacters('enemiesDiv', characters);
+            createSectionMessage('defenderDiv','The Defender','6');
             currentDefender.createHtml('defenderDiv');
             removeClickHandler(currentDefender.id);
+            createFightArea();
         }
     }
 
-    function createFightArea () {
+    function createFightArea () { 
+        var fightDiv = $('#fightDiv');
+        var attackColumn = $('<div class="col-md-6 col-sm-6 col-6 text-center">')
+        var attackButton = $('<button type="button" class="btn btn-danger">');
+        attackButton.text('Attack!');
+        attackColumn.append(attackButton);
+        fightDiv.append(attackColumn);
         
     }
 
@@ -58,6 +79,7 @@ $(document).ready(function () {
     }
 
     function unDrawCharacters(divName) {
+        $('#' + divName).prev().empty();
         $('#' + divName).empty();
     }
 
@@ -99,7 +121,4 @@ $(document).ready(function () {
             }
         };
     }
-
-
-
 })

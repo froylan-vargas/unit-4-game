@@ -8,3 +8,11 @@
 .container-fluid{
     padding: 0px !important;
 }
+
+#fightDiv {
+    margin-left: 20px;
+}
+
+button{
+    margin-bottom: 20px !important;
+}
