@@ -5,18 +5,31 @@ $(document).ready(function () {
     var hostCharacter = {};
     var currentDefender = {};
 
-    initGame();
-
     function initGame() {
+        restartGameState();
+        createCharactersArray();
+        createSectionTitle('chooseCharacterDiv', 'Pick your fight character', '12');
+        drawCharacters('chooseCharacterDiv', characters);
+    }
+
+    function restartGameState() {
         characterChoosen = false;
         hostCharacter = {};
         currentDefender = {};
+    }
+
+    function createCharactersArray() {
         characters.push(createCharacter('darth', 'Darth Vader', 200, 12, 24));
         characters.push(createCharacter('luke', 'Luke Skywalker', 220, 9, 18));
         characters.push(createCharacter('leia', 'Leia', 160, 6, 12));
         characters.push(createCharacter('obi', 'Obi-Wan Kenobi', 190, 5, 10));
-        createSectionMessage('chooseCharacterDiv', 'Pick your fight character','12');
-        drawCharacters('chooseCharacterDiv', characters);
+    }
+
+    function createSectionTitle(divName, message, size) {
+        $('<div class="row text-center">')
+            .append($(`<div class="col-md-${size} col-sm-${size} col-${size}">`)
+                .append($('<h3>')
+                    .text(message))).insertBefore($('#' + divName));
     }
 
     function drawCharacters(divName, array) {
@@ -25,52 +38,96 @@ $(document).ready(function () {
         });
     }
 
-    function createSectionMessage(divName, message, size){
-        var currentDiv = $('#' + divName);
-        var messageDiv = $('<div class="row text-center">');
-        var messageColumn = $(`<div class="col-md-${size} col-sm-${size} col-${size}">`);
-        var messageElement = $('<h3>');
-        messageElement.text(message);
-        messageColumn.append(messageElement);
-        messageDiv.append(messageColumn);
-        messageDiv.insertBefore(currentDiv);
+    function unDrawCharacters(divName) {
+        $('#' + divName).prev().empty();
+        $('#' + divName).empty();
     }
 
     function handleCharacterClick(characterId) {
+        var character = getSelectedCharacter(characterId);
         if (!characterChoosen) {
-            hostCharacter = getSelectedCharacter(characterId);
+            chosenCharacterActions(character);
             characterChoosen = true;
-            characters = removeFromArray(hostCharacter.id, characters);
-            unDrawCharacters('chooseCharacterDiv');
-            createSectionMessage('chosenCharacterDiv','Your character','12');
-            hostCharacter.createHtml('chosenCharacterDiv','12','12','12');
-            removeClickHandler(hostCharacter.id);
-            createSectionMessage('enemiesDiv','Enemies available to attack','12');
+            createSectionTitle('enemiesDiv', 'Enemies available to attack', '12');
             drawCharacters('enemiesDiv', characters);
         } else {
-            currentDefender = getSelectedCharacter(characterId);
-            characters = removeFromArray(currentDefender.id, characters);
-            unDrawCharacters('enemiesDiv');
-            createSectionMessage('defenderDiv','The Defender','12');
-            currentDefender.createHtml('defenderDiv','12','12','12');
-            characters = removeFromArray(currentDefender.id, characters);
-            console.log(characters);
-            removeClickHandler(currentDefender.id);
+            chosenCharacterActions(character);
             createFightArea();
         }
     }
 
-    function createFightArea () { 
-        var fightDiv = $('#fightDiv');
-        var attackColumn = $('<div class="col-md-12 col-sm-12 col-12">')
-        var attackButton = $('<button type="button" class="btn btn-danger">');
-        attackButton.text('Attack!');
-        attackColumn.append(attackButton);
-        fightDiv.append(attackColumn);
-        attackButton.on('click', ()=> attack());
+    function chosenCharacterActions(character) {
+        characters = removeFromArray(character.id, characters);
+        const { divToDissapear, divToShow, sectionTitle } = getChosenProperties();
+        unDrawCharacters(divToDissapear);
+        createSectionTitle(divToShow, sectionTitle, '12');
+        character.createHtml(divToShow, '12', '12', '12');
+        removeClickHandler(character.id);
     }
 
-    function attack(){
+    function getChosenProperties() {
+        return characterChoosen ? {
+            divToDissapear: 'enemiesDiv',
+            divToShow: 'defenderDiv',
+            sectionTitle: 'The Defender'
+        } : {
+                divToDissapear: 'chooseCharacterDiv',
+                divToShow: 'chosenCharacterDiv',
+                sectionTitle: 'Your character'
+            }
+    }
+
+    function createFightArea() {
+        var fightDiv = $('#fightDiv')
+            .append($('<div class="col-md-12 col-sm-12 col-12">')
+                .append($('<button type="button" class="btn btn-danger">')
+                    .text('Attack!')).on('click', () => attack()));
+    }
+
+    function getSelectedCharacter(characterId) {
+        return characters.filter(character => {
+            return character.id === characterId;
+        })[0];
+    }
+
+    function removeClickHandler(characterId) {
+        $('#' + characterId + " img").unbind("click");
+    }
+
+    function removeFromArray(id, array) {
+        return array.filter(elem => {
+            return elem.id !== id;
+        })
+    }
+
+    function createCharacter(id, name, hp, attack, counterAttack) {
+        return {
+            id,
+            name,
+            image: './assets/images/' + id + '.png',
+            hp,
+            baseAttack: attack,
+            currentAttack: attack,
+            counterAttack,
+            createHtml: function (divName, sm = '4', m = '4', xs = '6') {
+                $('#' + divName)
+                    .append($(`<div class="col-sm-${sm} col-md-${m} col-${xs}">`)
+                        .append($('<div class="charater_card">')
+                            .attr('id', this.id)
+                            .append($('<img>')
+                                .attr('src', './assets/images/' + this.id + '.png')
+                                .attr('class', 'character_img')
+                                .on('click', () => handleCharacterClick(this.id)))
+                            .append($('<div class="character_card_body">')
+                                .append($('<h5 class="character_card_title">')
+                                    .text(this.name))
+                                .append($('<p class="character_card-text">')
+                                    .text('HP: ' + this.hp)))));
+            }
+        };
+    }
+
+    function attack() {
         console.log('defender hp', currentDefender.hp);
         console.log('host current atack', hostCharacter.currentAttack);
         console.log('host hp', hostCharacter.hp);
@@ -84,9 +141,9 @@ $(document).ready(function () {
         console.log('-------------------------------');
 
         //Refresh new hp on screen.
-        
 
-        if(currentDefender.hp <= 0){
+
+        if (currentDefender.hp <= 0) {
             /*Logic you win
             //Message of win
             //Check if there are more enemies available
@@ -101,58 +158,6 @@ $(document).ready(function () {
             */
         }
     }
-    
-    function removeClickHandler(characterId){
-        $('#'+ characterId + " img").unbind("click");
-    }
-    
-    function removeFromArray(id, array) {
-        return array.filter(elem => {
-            return elem.id !== id;
-        })
-    }
 
-    function unDrawCharacters(divName) {
-        $('#' + divName).prev().empty();
-        $('#' + divName).empty();
-    }
-
-    function getSelectedCharacter(characterId) {
-        return characters.filter(character => {
-            return character.id === characterId;
-        })[0];
-    }
-
-    function createCharacter(id, name, hp, attack, counterAttack) {
-        return {
-            id,
-            name,
-            image: './assets/images/' + id + '.png',
-            hp,
-            baseAttack: attack,
-            currentAttack: attack,
-            counterAttack,
-            createHtml: function (divName, sm='4', m='4', xs='6') {
-                var chooseCharacterDiv = $('#' + divName);
-                var characterColumn = $(`<div class="col-sm-${sm} col-md-${m} col-${xs}">`);
-                var characterCard = $('<div class="charater_card">');
-                characterCard.attr('id', this.id);
-                var characterImage = $('<img>');
-                characterImage.attr('src', './assets/images/' + this.id + '.png');
-                characterImage.attr('class', 'character_img');
-                var characterBody = $('<div class="character_card_body">');
-                var characterTitle = $('<h5 class="character_card_title">');
-                var characterText = $('<p class="character_card-text">');
-                characterTitle.text(this.name);
-                characterText.text('HP: ' + this.hp);
-                characterCard.append(characterImage);
-                characterBody.append(characterTitle);
-                characterBody.append(characterText);
-                characterCard.append(characterBody);
-                characterColumn.append(characterCard);
-                chooseCharacterDiv.append(characterColumn);
-                characterImage.on('click', () => handleCharacterClick(this.id));
-            }
-        };
-    }
+    initGame();
 })
