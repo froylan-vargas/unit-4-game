@@ -1,0 +1,10 @@
+.character_img{
+    width:  150px;
+    height: 150px;
+    margin-bottom: 10px;
+    cursor:pointer;
+}
+
+.container-fluid{
+    padding: 0px !important;
+}
