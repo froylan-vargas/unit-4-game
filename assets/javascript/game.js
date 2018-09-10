@@ -68,7 +68,6 @@ $(document).ready(function () {
             var xs = columnSize == 12 ? columnSize : '6';
             character.createHtml(divName, columnSize, columnSize, xs);
         });
-        $('body').height('100%');
     }
 
     function unDrawCharacters(divName) {
@@ -195,14 +194,14 @@ $(document).ready(function () {
     function attack() {
         attackOperations();
         updateScreenAfterAttack();
-        if (currentDefender.hp <= 0) {
-            var message = characters.length>0 ? `You defeat ${currentDefender.name}!` : 
-            `You defeat all enemies!` ;
-            resultActions('winDiv', message, characters.length > 0)
-        } else if (hostCharacter.hp <= 0) {
+        if (hostCharacter.hp <= 0) {
             resultActions('looseDiv', 'You loose! Try Again', false);
         }
+        else if (currentDefender.hp <= 0) {
+            var message = characters.length > 0 ? `You defeat ${currentDefender.name}!` :
+                `You defeat all enemies!`;
+            resultActions('winDiv', message, characters.length > 0)
+        }
     }
-
     initGame();
 })
