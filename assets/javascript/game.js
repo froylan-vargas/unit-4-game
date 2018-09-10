@@ -22,9 +22,9 @@ $(document).ready(function () {
 
     function createCharactersArray() {
         characters.push(createCharacter('darth', 'Darth Vader', 230, 7, 30));
-        characters.push(createCharacter('luke', 'Luke Skywalker', 240, 7, 25));
+        characters.push(createCharacter('luke', 'Luke', 240, 7, 25));
         characters.push(createCharacter('leia', 'Leia', 160, 19, 8));
-        characters.push(createCharacter('obi', 'Obi-Wan Kenobi', 170, 18, 6));
+        characters.push(createCharacter('obi', 'Obi-Wan', 170, 18, 6));
     }
 
     function createCharacter(id, name, hp, attack, counterAttack) {
