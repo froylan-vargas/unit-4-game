@@ -2,26 +2,23 @@ $(document).ready(function () {
 
     var characters = [];
     var characterChoosen = false;
-    var hostCharacter = {};
-    var currentDefender = {};
+    var hostCharacter, currentDefender = {};
 
     function initGame() {
         restartGameState();
         createCharactersArray();
         cleanDivs();
-        createSectionTitle('chooseCharacterDiv', 'Pick your fight character', '12');
-        drawCharacters('chooseCharacterDiv', characters);
+        drawCharacters('chooseCharacterDiv', 'Pick your fight character', characters);
     }
 
-    function cleanDivs(){
+    function cleanDivs() {
         $('.row').empty();
     }
 
     function restartGameState() {
         characters = [];
         characterChoosen = false;
-        hostCharacter = {};
-        currentDefender = {};
+        hostCharacter, currentDefender = {};
     }
 
     function createCharactersArray() {
@@ -59,22 +56,27 @@ $(document).ready(function () {
     }
 
 
-    function createSectionTitle(divName, message, size) {
+    function createSectionTitle(divName, title, size) {
         $('<div class="row text-center">')
             .append($(`<div class="col-md-${size} col-sm-${size} col-${size}">`)
                 .append($('<h3>')
-                    .text(message))).insertBefore($('#' + divName));
+                    .text(title))).insertBefore($('#' + divName));
     }
 
-    function drawCharacters(divName, array) {
+    function drawCharacters(divName, title, array) {
+        createSectionTitle(divName, title, '12');
         array.forEach(character => {
             character.createHtml(divName);
         });
     }
 
     function unDrawCharacters(divName) {
+        cleanDivAndTitle(divName);
+    }
+
+    function cleanDivAndTitle(divName) {
         $('#' + divName).prev().empty();
-        $('#' + divName).empty();
+        cleanDiv(divName);
     }
 
     function handleCharacterClick(characterId) {
@@ -83,13 +85,16 @@ $(document).ready(function () {
             hostCharacter = character;
             chosenCharacterActions(character);
             characterChoosen = true;
-            createSectionTitle('enemiesDiv', 'Enemies available to attack', '12');
-            drawCharacters('enemiesDiv', characters);
+            drawEnemies();
         } else {
             currentDefender = character;
             chosenCharacterActions(character);
             createFightArea();
         }
+    }
+
+    function drawEnemies(){
+        drawCharacters('enemiesDiv','Enemies available to atack', characters);
     }
 
     function chosenCharacterActions(character) {
@@ -121,9 +126,7 @@ $(document).ready(function () {
     }
 
     function getSelectedCharacter(characterId) {
-        return characters.filter(character => {
-            return character.id === characterId;
-        })[0];
+        return characters.filter(character => character.id === characterId)[0];
     }
 
     function removeClickHandler(selector) {
@@ -131,9 +134,7 @@ $(document).ready(function () {
     }
 
     function removeFromArray(id, array) {
-        return array.filter(elem => {
-            return elem.id !== id;
-        })
+        return array.filter(elem =>  elem.id !== id);
     }
 
     function updateScreenAfterAttack() {
@@ -151,12 +152,12 @@ $(document).ready(function () {
                 .text(`${currentDefender.name} attacked you back for ${currentDefender.counterAttack} damage`)));
     }
 
-    function cleanDiv(divName){
+    function cleanDiv(divName) {
         $('#' + divName).empty();
     }
 
     function updateDisplayHp(character) {
-        $('#' + character.id + ' .character_card-text').text(character.hp);
+        $('#' + character.id + ' .character_card-text').text(`HP: ${character.hp}`);
     }
 
     function attackOperations() {
@@ -165,39 +166,38 @@ $(document).ready(function () {
         hostCharacter.hp -= currentDefender.counterAttack;
     }
 
-    function looseActions(){
+    function resultActions(divName, message, remainingEnemies) {
         cleanDiv('attackStatusDiv');
         cleanDiv('fightDiv');
-        displayLooseElements();
+        displayResultElements(divName, message, remainingEnemies);
     }
 
-    function displayLooseElements(){
-        $('#looseDiv')
+    function displayResultElements(divName, message, remainingEnemies) {
+        $(`#${divName}`)
             .append($('<div class="col-md-12 col-sm-12 col-12">')
-                .append($('<h6>').text('You loose!'))
-                .append(createRestartButton()));
+                .append($('<h6>').text(message))
+                .append(createContinueGameButton(remainingEnemies)));
     }
 
-    function createRestartButton(){
+    function displayNextEnemies() {
+        cleanDivAndTitle('defenderDiv');
+        cleanDiv('winDiv');
+        drawEnemies();
+    }
+
+    function createContinueGameButton(remainingEnemies) {
         return $('<button type="button" class="btn btn-info">')
-        .text('Restart')
-        .on('click', () => initGame());
+            .text(remainingEnemies ? 'Next Enemy' : 'Restart')
+            .on('click', () => remainingEnemies ? displayNextEnemies() : initGame());
     }
 
     function attack() {
         attackOperations();
         updateScreenAfterAttack();
-
         if (currentDefender.hp <= 0) {
-            /*Logic you win
-            //Message of win
-            //Check if there are more enemies available
-            //Clean fight area and defenderDiv
-            //Show available enemies if its the case
-            //If not, restart the game from the beginning
-            */
+            resultActions('winDiv', 'You win!', characters.length > 0)
         } else if (hostCharacter.hp <= 0) {
-            looseActions();
+            resultActions('looseDiv', 'You loose!', false);
         }
     }
 
