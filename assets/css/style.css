@@ -10,7 +10,8 @@ body{
 }
 
 .sectionTitle{
-    background-color: rgb(105, 105, 105, .4);
+    background: rgb(105, 105, 105);
+    background: rgba(105, 105, 105, .4);
 }
 
 .character_img{

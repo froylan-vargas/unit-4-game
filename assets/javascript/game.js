@@ -68,6 +68,7 @@ $(document).ready(function () {
             var xs = columnSize == 12 ? columnSize : '6';
             character.createHtml(divName, columnSize, columnSize, xs);
         });
+        $('body').height('100%');
     }
 
     function unDrawCharacters(divName) {
