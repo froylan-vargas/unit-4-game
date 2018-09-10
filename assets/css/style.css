@@ -1,7 +1,21 @@
+html, body{
+    height: 100%;
+    color: white !important;
+}
+
+body{
+    background: url('../images/background.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.sectionTitle{
+    background-color: rgb(105, 105, 105, .4);
+}
+
 .character_img{
-    width:  150px;
+    max-width:150px;
     height: 130px;
-    margin-bottom: 10px;
     cursor:pointer;
 }
 
@@ -9,6 +23,22 @@
     padding: 0px !important;
 }
 
-button{
-    margin-bottom: 20px !important;
+#attackButton{
+    margin: 20px 0px !important;
 }
+
+.column{
+    padding: 0px !important;
+}
+
+p {
+    margin-bottom: 0px !important;
+}
+
+#attackStatusDiv, #looseDiv, #winDiv{
+    margin-top: 20px;
+    background-color: rgb(105, 105, 105, .4);
+}
+
+
+

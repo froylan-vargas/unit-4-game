@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
     var characters = [];
     var characterChoosen = false;
     var hostCharacter, currentDefender = {};
@@ -22,10 +21,10 @@ $(document).ready(function () {
     }
 
     function createCharactersArray() {
-        characters.push(createCharacter('darth', 'Darth Vader', 200, 16, 24));
-        characters.push(createCharacter('luke', 'Luke Skywalker', 220, 17, 18));
-        characters.push(createCharacter('leia', 'Leia', 160, 2, 12));
-        characters.push(createCharacter('obi', 'Obi-Wan Kenobi', 190, 15, 10));
+        characters.push(createCharacter('darth', 'Darth Vader', 230, 7, 30));
+        characters.push(createCharacter('luke', 'Luke Skywalker', 240, 7, 25));
+        characters.push(createCharacter('leia', 'Leia', 160, 19, 8));
+        characters.push(createCharacter('obi', 'Obi-Wan Kenobi', 170, 18, 6));
     }
 
     function createCharacter(id, name, hp, attack, counterAttack) {
@@ -37,9 +36,9 @@ $(document).ready(function () {
             baseAttack: attack,
             currentAttack: attack,
             counterAttack,
-            createHtml: function (divName, sm = '4', m = '4', xs = '6') {
+            createHtml: function (divName, sm, m, xs = 6) {
                 $('#' + divName)
-                    .append($(`<div class="col-sm-${sm} col-md-${m} col-${xs}">`)
+                    .append($(`<div class="column col-sm-${sm} col-md-${m} col-${xs}">`)
                         .append($('<div class="charater_card">')
                             .attr('id', this.id)
                             .append($('<img>')
@@ -47,26 +46,27 @@ $(document).ready(function () {
                                 .attr('class', 'character_img')
                                 .on('click', () => handleCharacterClick(this.id)))
                             .append($('<div class="character_card_body">')
-                                .append($('<h5 class="character_card_title">')
+                                .append($('<h6 class="character_card_title">')
                                     .text(this.name))
                                 .append($('<p class="character_card-text">')
-                                    .text('HP: ' + this.hp)))));
+                                    .text('HP: ' + this.hp))))).fadeIn('slow');
             }
         };
     }
 
-
     function createSectionTitle(divName, title, size) {
-        $('<div class="row text-center">')
+        $('<div class="row sectionTitle text-center">')
             .append($(`<div class="col-md-${size} col-sm-${size} col-${size}">`)
                 .append($('<h3>')
                     .text(title))).insertBefore($('#' + divName));
     }
 
     function drawCharacters(divName, title, array) {
+        var columnSize = 12 / array.length;
         createSectionTitle(divName, title, '12');
         array.forEach(character => {
-            character.createHtml(divName);
+            var xs = columnSize == 12 ? columnSize : '6';
+            character.createHtml(divName, columnSize, columnSize, xs);
         });
     }
 
@@ -93,8 +93,8 @@ $(document).ready(function () {
         }
     }
 
-    function drawEnemies(){
-        drawCharacters('enemiesDiv','Enemies available to atack', characters);
+    function drawEnemies() {
+        drawCharacters('enemiesDiv', 'Enemies available to attack', characters);
     }
 
     function chosenCharacterActions(character) {
@@ -134,7 +134,7 @@ $(document).ready(function () {
     }
 
     function removeFromArray(id, array) {
-        return array.filter(elem =>  elem.id !== id);
+        return array.filter(elem => elem.id !== id);
     }
 
     function updateScreenAfterAttack() {
@@ -175,7 +175,7 @@ $(document).ready(function () {
     function displayResultElements(divName, message, remainingEnemies) {
         $(`#${divName}`)
             .append($('<div class="col-md-12 col-sm-12 col-12">')
-                .append($('<h6>').text(message))
+                .append($('<h2>').text(message))
                 .append(createContinueGameButton(remainingEnemies)));
     }
 
@@ -195,9 +195,11 @@ $(document).ready(function () {
         attackOperations();
         updateScreenAfterAttack();
         if (currentDefender.hp <= 0) {
-            resultActions('winDiv', 'You win!', characters.length > 0)
+            var message = characters.length>0 ? `You defeat ${currentDefender.name}!` : 
+            `You defeat all enemies!` ;
+            resultActions('winDiv', message, characters.length > 0)
         } else if (hostCharacter.hp <= 0) {
-            resultActions('looseDiv', 'You loose!', false);
+            resultActions('looseDiv', 'You loose! Try Again', false);
         }
     }
 
