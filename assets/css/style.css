@@ -9,7 +9,7 @@ body{
     background-size: cover;
 }
 
-.sectionTitle{
+.sectionTitle, #attackStatusDiv, #looseDiv, #winDiv{
     background: rgb(105, 105, 105);
     background: rgba(105, 105, 105, .4);
 }
@@ -38,7 +38,6 @@ p {
 
 #attackStatusDiv, #looseDiv, #winDiv{
     margin-top: 20px;
-    background-color: rgb(105, 105, 105, .4);
 }
 
 
