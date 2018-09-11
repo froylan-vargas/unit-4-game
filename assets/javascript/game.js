@@ -42,14 +42,14 @@ $(document).ready(function () {
                         .append($('<div class="charater_card">')
                             .attr('id', this.id)
                             .append($('<img>')
-                                .attr('src', './assets/images/' + this.id + '.png')
+                                .attr('src', this.image)
                                 .attr('class', 'character_img')
                                 .on('click', () => handleCharacterClick(this.id)))
                             .append($('<div class="character_card_body">')
                                 .append($('<h6 class="character_card_title">')
                                     .text(this.name))
                                 .append($('<p class="character_card-text">')
-                                    .text('HP: ' + this.hp))))).fadeIn('slow');
+                                    .text('HP: ' + this.hp)))))
             }
         };
     }
@@ -65,7 +65,7 @@ $(document).ready(function () {
         var columnSize = 12 / array.length;
         createSectionTitle(divName, title, '12');
         array.forEach(character => {
-            var xs = columnSize == 12 ? columnSize : '6';
+            var xs = columnSize === 12 ? columnSize : '6';
             character.createHtml(divName, columnSize, columnSize, xs);
         });
     }
